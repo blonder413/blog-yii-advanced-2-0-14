@@ -5,12 +5,14 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 use yii\web\IdentityInterface;
 
 /**
  * User model
  *
  * @property integer $id
+ * @property string $name
  * @property string $username
  * @property string $password_hash
  * @property string $password_reset_token
@@ -26,13 +28,14 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
 
-
+    public $file;
+    
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%user}}';
+        return '{{%users}}';
     }
 
     /**
@@ -40,9 +43,16 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function behaviors()
     {
-        return [
-            TimestampBehavior::className(),
-        ];
+      return [
+          'timestamp' => [
+              'class' => 'yii\behaviors\TimestampBehavior',
+              'attributes' => [
+                  ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                  ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+              ],
+              'value' => new Expression('NOW()'),
+          ],
+      ];
     }
 
     /**
@@ -51,6 +61,9 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
+            [['name', 'username', 'email', 'password_hash', 'photo'], 'required', 'on' => 'create'],
+            [['email'], 'email'],
+            [['file'], 'image', 'extensions' => 'jpg, jpeg'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
         ];
