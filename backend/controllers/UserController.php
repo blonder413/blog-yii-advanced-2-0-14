@@ -114,8 +114,44 @@ class UserController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->file = UploadedFile::getInstance($model, 'file');
+
+            // si subo otra imagen tengo que remplazar la anterior
+            if($model->file) {
+                // borro el archivo anterior
+                unlink('img/users/' . $model->photo);
+                $model->photo = Helper::limpiaUrl($model->username . '.' . $model->file->extension);
+            } else {
+              // si cambia el nombre del usuario renombro la imagen
+              $model->photo = Helper::limpiaUrl($model->username . '.jpg');
+              $oldImage = $model->oldAttributes['photo'];
+              rename('img/users/' . $oldImage, 'img/users/' . $model->photo);
+            }
+
+            if ($model->save()) {
+              if($model->file) {
+                $model->file->saveAs( 'img/users/' . $model->photo);
+              }
+              Yii::$app->session->setFlash('success', Yii::t('app', 'User updated successfully'));
+            } else {
+              print_r($model->getErrors());
+              exit;
+              $errors = '<ul>';
+                 foreach ($model->getErrors() as $key => $value) {
+                     foreach ($value as $row => $field) {
+                         //Yii::$app->session->setFlash("danger", $field);
+                         $errors .= "<li>" . $field . "</li>";
+                     }
+                 }
+                 $errors .= '</ul>';
+
+                 //print_r($errors);exit;
+                 Yii::$app->session->setFlash("danger", $errors);
+              return $this->redirect(['index']);
+            }
+
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [

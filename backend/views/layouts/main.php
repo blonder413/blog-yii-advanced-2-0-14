@@ -43,6 +43,7 @@ AppAsset::register($this);
                             ['label' => 'Article', 'url' => ['/article/index']],
                             ['label' => 'Category', 'url' => ['/category/index']],
                             ['label' => 'Comment', 'url' => ['/comment/index']],
+                            ['label' => 'Course', 'url' => ['/course/index']],
                             ['label' => 'Streaming', 'url' => ['/streaming/index']],
                             ['label' => 'Type', 'url' => ['/type/index']],
                             ['label' => 'User', 'url' => ['/user/index']],
