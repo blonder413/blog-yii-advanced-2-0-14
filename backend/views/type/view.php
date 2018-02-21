@@ -30,9 +30,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'type',
-            'created_by',
+            [
+                'attribute' => 'created_by',
+                //'format'      => 'raw',
+                'value'     => $model->createdBy->name,
+            ],
             'created_at',
-            'updated_by',
+            //'updated_by',
+            [
+                'attribute' => 'updated_by',
+                //'format'      => 'raw',
+                'value'     => $model->createdBy->name,
+            ],
             'updated_at',
         ],
     ]) ?>

@@ -46,20 +46,21 @@ class SeedController extends Controller
 
             //$this->stdout("Users inserted\n", Console::BOLD);
             $this->stdout("inserted registers for users table\n", Console::FG_GREEN);
+            // -- ------------------------------------- Categories --------------------------------------------
             $this->stdout("inserting registers for categories table\n", Console::FG_YELLOW);
             for ($i=0; $i <10; $i++){
 
                 Yii::$app->db->createCommand()->batchInsert('categories',
                     [
-                        'category', 'slug', 'image', 'description',
+                        'category', 'slug', 'description', 'image',
                         'created_by', 'created_at', 'updated_by', 'updated_at'
                     ],
                     [
                         [
                             $faker->unique()->word,
                             $faker->unique()->slug,
-                            'image-' . $i . '.png',
                             $faker->text(200),
+                            'image-' . $i . '.png',
                             $faker->numberBetween(1,10),
                             new Expression('NOW()'),
                             $faker->numberBetween(1,10),
@@ -70,6 +71,32 @@ class SeedController extends Controller
             }
 
             $this->stdout("inserted registers for categories table\n", Console::FG_GREEN);
+            // -- ------------------------------------- Courses --------------------------------------------
+            $this->stdout("inserting registers for courses table\n", Console::FG_YELLOW);
+            for ($i=0; $i <10; $i++){
+
+                Yii::$app->db->createCommand()->batchInsert('courses',
+                    [
+                        'course', 'slug', 'description', 'image',
+                        'created_by', 'created_at', 'updated_by', 'updated_at'
+                    ],
+                    [
+                        [
+                            $faker->unique()->word,
+                            $faker->unique()->slug,
+                            $faker->text(200),
+                            'image-' . $i . '.png',
+                            $faker->numberBetween(1,10),
+                            new Expression('NOW()'),
+                            $faker->numberBetween(1,10),
+                            new Expression('NOW()')
+                        ],
+                    ]
+                )->execute();
+            }
+
+            $this->stdout("inserted registers for categories table\n", Console::FG_GREEN);
+            // -- ------------------------------------- Types --------------------------------------------
             $this->stdout("inserting registers for types table\n", Console::FG_YELLOW);
 
             for ($i=0; $i <3; $i++) {

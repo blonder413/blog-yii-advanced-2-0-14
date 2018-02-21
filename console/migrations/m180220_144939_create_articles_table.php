@@ -23,7 +23,7 @@ class m180220_144939_create_articles_table extends Migration
           'number'            => $this->smallInteger(),
           'title'             => $this->string(150)->notNull()->unique(),
           'slug'              => $this->string(150)->notNull(),
-          'topic'             => $this->string(100)->notNull(),
+          'topic'             => $this->string(100),
           'detail'            => $this->text()->notNull(),
           'abstract'          => $this->string(300)->notNull(),
           'video'             => $this->string(255),

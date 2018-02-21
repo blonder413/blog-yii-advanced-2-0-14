@@ -21,9 +21,9 @@ class m180220_144922_create_categories_table extends Migration
       $this->createTable('{{categories}}', [
           'id'            => $this->primaryKey(),
           'category'      => $this->string(100)->notNull(),
-          'slug'      => $this->string(100)->notNull(),
-          'image'         => $this->string(50),
+          'slug'          => $this->string(100)->notNull(),
           'description'   => $this->string(255),
+          'image'         => $this->string(50),
           'created_by'    => $this->integer()->notNull(),
           'created_at'    => $this->dateTime()->notNull(),
           'updated_by'    => $this->integer()->notNull(),

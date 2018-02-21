@@ -1,7 +1,10 @@
 <?php
 
 namespace backend\models;
-
+use \yii\behaviors\BlameableBehavior;
+use \yii\behaviors\SluggableBehavior;
+use yii\db\ActiveRecord;
+use yii\db\Expression;
 use Yii;
 
 /**
@@ -35,8 +38,11 @@ use Yii;
  * @property User $updatedBy
  * @property Comment[] $comments
  */
-class Article extends \yii\db\ActiveRecord
+class Article extends ActiveRecord
 {
+    const STATUS_INACTIVE = false; // 0
+    const STATUS_ACTIVE = true;   // 1
+
     /**
      * @inheritdoc
      */
@@ -52,14 +58,14 @@ class Article extends \yii\db\ActiveRecord
     {
         return [
             [['number', 'type_id', 'category_id', 'visit_counter', 'download_counter', 'course_id', 'created_by', 'updated_by'], 'integer'],
-            [['title', 'slug', 'topic', 'detail', 'abstract', 'type_id', 'category_id', 'tags', 'status', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'required'],
+            [['title', 'slug', 'detail', 'abstract', 'type_id', 'category_id', 'tags'], 'required'],
             [['detail'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['title', 'slug'], 'string', 'max' => 150],
             [['topic', 'download'], 'string', 'max' => 100],
             [['abstract'], 'string', 'max' => 300],
             [['video', 'tags'], 'string', 'max' => 255],
-            [['status'], 'string', 'max' => 1],
+            [['status'], 'boolean'],
             [['title'], 'unique'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['course_id'], 'exist', 'skipOnError' => true, 'targetClass' => Course::className(), 'targetAttribute' => ['course_id' => 'id']],
@@ -83,19 +89,66 @@ class Article extends \yii\db\ActiveRecord
             'detail' => Yii::t('app', 'Detail'),
             'abstract' => Yii::t('app', 'Abstract'),
             'video' => Yii::t('app', 'Video'),
-            'type_id' => Yii::t('app', 'Type ID'),
+            'type_id' => Yii::t('app', 'Type'),
             'download' => Yii::t('app', 'Download'),
-            'category_id' => Yii::t('app', 'Category ID'),
+            'category_id' => Yii::t('app', 'Category'),
             'tags' => Yii::t('app', 'Tags'),
             'status' => Yii::t('app', 'Status'),
             'visit_counter' => Yii::t('app', 'Visit Counter'),
             'download_counter' => Yii::t('app', 'Download Counter'),
-            'course_id' => Yii::t('app', 'Course ID'),
+            'course_id' => Yii::t('app', 'Course'),
             'created_by' => Yii::t('app', 'Created By'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => 'yii\behaviors\TimestampBehavior',
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
+            'blameable' => [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'created_by',
+                'updatedByAttribute' => 'updated_by',
+            ],
+            [
+                'class' => SluggableBehavior::className(),
+                'attribute' => 'title',
+                //'slugAttribute' => 'seo_slug',
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($insert) {
+                $this->status = self::STATUS_ACTIVE;
+//                $this->created_by = Yii::$app->user->id;
+//                $this->created_at = new Expression('NOW()');
+//                $this->updated_by = Yii::$app->user->id;
+//                $this->updated_at = new Expression('NOW()');
+            } else {
+                if ( isset( Yii::$app->user->id ) ) {
+//                    $this->updated_by = Yii::$app->user->id;
+//                    $this->updated_at = new \yii\db\Expression('NOW()');
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -144,5 +197,13 @@ class Article extends \yii\db\ActiveRecord
     public function getComments()
     {
         return $this->hasMany(Comment::className(), ['article_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCommentsCount()
+    {
+        return $this->hasMany(Comment::className(), ['article_id' => 'id'])->count();
     }
 }
