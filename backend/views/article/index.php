@@ -114,7 +114,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
         ],
-
         'rowOptions'    => function($model){
             if ($model->status == Article::STATUS_INACTIVE) {
                 return ['class' => 'danger'];

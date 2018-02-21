@@ -3,16 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\Article;
-use backend\models\ArticleSearch;
+use backend\models\Streaming;
+use backend\models\StreamingSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ArticleController implements the CRUD actions for Article model.
+ * StreamingController implements the CRUD actions for Streaming model.
  */
-class ArticleController extends Controller
+class StreamingController extends Controller
 {
     /**
      * @inheritdoc
@@ -30,12 +30,12 @@ class ArticleController extends Controller
     }
 
     /**
-     * Lists all Article models.
+     * Lists all Streaming models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ArticleSearch();
+        $searchModel = new StreamingSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -45,34 +45,7 @@ class ArticleController extends Controller
     }
 
     /**
-     * Updates status for an existing Article model.
-     * If update is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionChangeStatus($id)
-    {
-      $model = $this->findModel($id);
-
-      if ($model->status == $model::STATUS_INACTIVE) {
-          $model->status = $model::STATUS_ACTIVE;
-      } elseif ($model->status == $model::STATUS_ACTIVE) {
-          $model->status = $model::STATUS_INACTIVE;
-      }
-
-      if ($model->save()) {
-        Yii::$app->session->setFlash('success', Yii::t('app', 'Article udpated successfully'));
-      } else {
-        print_r($model->getErrors());
-        exit;
-      }
-
-      return $this->redirect(['index']);
-    }
-
-    /**
-     * Displays a single Article model.
+     * Displays a single Streaming model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -85,33 +58,24 @@ class ArticleController extends Controller
     }
 
     /**
-     * Creates a new Article model.
+     * Creates a new Streaming model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Article();
+        $model = new Streaming();
 
         if ($model->load(Yii::$app->request->post())) {
-
-//            $transaction = Article::getDb()->beginTransaction();
             $transaction = Yii::$app->db->beginTransaction();
-
             try {
-
 //                setlocale(LC_ALL,"es_CO");
 
 //                $query = "SET lc_time_names = 'es_CO';";
 //                $stmt = $this->connexion->query($query);
 
-                $model->detail = html_entity_decode($model->detail);
-
-//                $model->updated_by = Yii::$app->user->id;
-//                $model->updated_at = new \yii\db\Expression('NOW()');
-
                 if ($model->save()) {
-                    Yii::$app->session->setFlash("success","Article created successfully!");
+                    Yii::$app->session->setFlash("success","Streaming created successfully!");
                 } else {
                     $errors = '';
                     foreach ($model->getErrors() as $key => $value) {
@@ -120,7 +84,6 @@ class ArticleController extends Controller
                             $errors .= $field . "<br>";
                         }
                     }
-
                     Yii::$app->session->setFlash("danger", $errors);
                 }
 
@@ -137,10 +100,14 @@ class ArticleController extends Controller
                 'model' => $model,
             ]);
         }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**
-     * Updates an existing Article model.
+     * Updates an existing Streaming model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -151,7 +118,7 @@ class ArticleController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -160,45 +127,44 @@ class ArticleController extends Controller
     }
 
     /**
-     * Deletes an existing Article model.
+     * Deletes an existing Streaming model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
-    {
-        try{
-          $model = $this->findModel($id);
-          if($model->delete()) {
-            Yii::$app->session->setFlash("success", Yii::t('app', "Article deleted successfully!"));
-          } else {
-            $errors = '';
-            foreach ($model->getErrors() as $key => $value) {
-                foreach ($value as $row => $field) {
-                    //Yii::$app->session->setFlash("danger", $field);
-                    $errors .= $field . "<br>";
-                }
-            }
-            Yii::$app->session->setFlash("danger", $errors);
-          }
-        } catch (\Exception $e) {
-          Yii::$app->session->setFlash("warning", Yii::t('app', "Article can't be deleted!"));
-        }
+     public function actionDelete($id)
+     {
+         try{
+           if($this->findModel($id)->delete()) {
+             Yii::$app->session->setFlash("success", Yii::t('app', "Streaming deleted successfully!"));
+           } else {
+             $errors = '';
+             foreach ($model->getErrors() as $key => $value) {
+                 foreach ($value as $row => $field) {
+                     //Yii::$app->session->setFlash("danger", $field);
+                     $errors .= $field . "<br>";
+                 }
+             }
+             Yii::$app->session->setFlash("danger", $errors);
+           }
+         } catch (\Exception $e) {
+           Yii::$app->session->setFlash("warning", Yii::t('app', "Streaming can't be deleted!"));
+         }
 
-        return $this->redirect(['index']);
-    }
+         return $this->redirect(['index']);
+     }
 
     /**
-     * Finds the Article model based on its primary key value.
+     * Finds the Streaming model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Article the loaded model
+     * @return Streaming the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Article::findOne($id)) !== null) {
+        if (($model = Streaming::findOne($id)) !== null) {
             return $model;
         }
 

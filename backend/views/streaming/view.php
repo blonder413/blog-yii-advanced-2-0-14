@@ -4,13 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\Article */
+/* @var $model backend\models\Streaming */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Articles'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Streamings'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="article-view">
+<div class="streaming-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -29,21 +29,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'number',
             'title',
-            'slug',
-            'topic',
-            'detail:ntext',
-            'abstract',
-            'video',
-            'type.type',
-            'download',
-            'category.category',
-            'tags',
-            'status',
-            'visit_counter',
-            'download_counter',
-            'course.course',
+            'description:ntext',
+            'embed',
+            'start',
+            'end',
             //'created_by',
             [
                 'attribute' => 'created_by',

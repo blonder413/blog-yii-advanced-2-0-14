@@ -204,6 +204,8 @@ class Article extends ActiveRecord
      */
     public function getCommentsCount()
     {
-        return $this->hasMany(Comment::className(), ['article_id' => 'id'])->count();
+        return $this->hasMany(Comment::className(), ['article_id' => 'id'])
+                    ->where("status = " . Comment::STATUS_ACTIVE)
+                    ->count();
     }
 }
