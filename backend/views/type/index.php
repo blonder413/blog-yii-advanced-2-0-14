@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\widgets\PJax;
+use yii\bootstrap\Modal;
+use backend\models\Type;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\TypeSearch */
@@ -16,7 +19,16 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Create Type'), ['create'], ['class' => 'btn btn-success']) ?>
+      <?php
+      Modal::begin([
+        'header'  => '<h2>' . Yii::t('app', 'Create Type') . '</h2>',
+        'toggleButton'  => ['label' => Yii::t('app', 'Create Type'), 'class' => 'btn btn-success']
+      ]);
+
+      echo $this->render('/type/create', ['model' => new Type()]);
+
+      Modal::end();
+      ?>
     </p>
 
     <?= GridView::widget([

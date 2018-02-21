@@ -35,6 +35,25 @@ class TypeController extends Controller
      */
     public function actionIndex()
     {
+        $model = new Type();
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+              Yii::$app->session->setFlash("success", Yii::t('app', "Type createed successfully!"));
+            } else {
+                $errors = '';
+                foreach ($model->getErrors() as $key => $value) {
+                    foreach ($value as $row => $field) {
+                        //Yii::$app->session->setFlash("danger", $field);
+                        $errors .= $field . "<br>";
+                    }
+                }
+                Yii::$app->session->setFlash("danger", $errors);
+            }
+
+            $model = new Type();
+        }
+
         $searchModel = new TypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

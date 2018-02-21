@@ -18,7 +18,7 @@ use Yii;
  * @property User $createdBy
  * @property User $updatedBy
  */
-class Type extends \yii\db\ActiveRecord
+class Type extends MyActiveRecord
 {
     /**
      * @inheritdoc
@@ -34,7 +34,8 @@ class Type extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'required'],
+            [['type'], 'required'],
+            [['type'], 'unique'],
             [['created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['type'], 'string', 'max' => 50],
