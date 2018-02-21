@@ -115,11 +115,27 @@ class StreamingController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+      $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+      if ($model->load(Yii::$app->request->post())) {
+        if ($model->save()) {
+          Yii::$app->session->setFlash('success', Yii::t('app', 'Streaming updated successfully'));
+        } else {
+          $errors = '<ul>';
+              foreach ($model->getErrors() as $key => $value) {
+                  foreach ($value as $row => $field) {
+                      //Yii::$app->session->setFlash("danger", $field);
+                      $errors .= "<li>" . $field . "</li>";
+                  }
+              }
+              $errors .= '</ul>';
+
+              //print_r($errors);exit;
+              Yii::$app->session->setFlash("danger", $errors);
         }
+
+        return $this->redirect(['index']);
+      }
 
         return $this->render('update', [
             'model' => $model,

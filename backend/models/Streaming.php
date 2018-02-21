@@ -40,6 +40,15 @@ class Streaming extends MyActiveRecord
             [['title', 'description', 'start', 'end'], 'required'],
             [['description'], 'string'],
             [['start', 'end', 'created_at', 'updated_at'], 'safe'],
+            [
+              ['start'], 'compare', 'compareAttribute' => 'end', 'operator' => '<',
+              //'when' => function($model){
+              //  return $this->start < $this->end;
+              //},
+              //'whenClient'  => "function (attribute, value) {
+              //  return $('#streaming-start').val() < $('#streaming-end').val();
+              //}"
+            ],
             [['created_by', 'updated_by'], 'integer'],
             [['title'], 'string', 'max' => 100],
             [['embed'], 'string', 'max' => 255],

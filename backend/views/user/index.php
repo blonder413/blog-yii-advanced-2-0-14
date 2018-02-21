@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-
+use kartik\select2\Select2;
 use common\models\User;
 
 /* @var $this yii\web\View */
@@ -36,16 +36,37 @@ $this->params['breadcrumbs'][] = $this->title;
             'email:email',
             //'photo',
             //'status',
+//            [
+//                'attribute' => 'status',
+//                'format'    => 'raw',
+//                'value'     => function($searchModel) {
+//                    if ($searchModel->status === 0) {
+//                        return "<span class='glyphicon glyphicon-remove'></span>";
+//                    } else {
+//                        return "<span class='glyphicon glyphicon-ok'></span>";
+//                    }
+//                }
+//            ],
             [
                 'attribute' => 'status',
                 'format'    => 'raw',
-                'value'     => function($searchModel) {
-                    if ($searchModel->status === 0) {
-                        return "<span class='glyphicon glyphicon-remove'></span>";
-                    } else {
-                        return "<span class='glyphicon glyphicon-ok'></span>";
-                    }
-                }
+                'filter'    => Select2::widget([
+                                'model' => $searchModel,
+                                'attribute' => 'status',
+                                //'data' => \yii\helpers\ArrayHelper::map(\backend\models\Category::find()->all(), 'id', 'category'),
+                                'data'    => [User::STATUS_ACTIVE => 'ACTIVE', User::STATUS_DELETED => 'DELETED'],
+                                'options' => ['placeholder' => 'Seleccione...'],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                            ]),
+                  'value'     => function($searchModel) {
+                                if ($searchModel->status === 0) {
+                                    return "<span class='glyphicon glyphicon-remove'></span>";
+                                } else {
+                                    return "<span class='glyphicon glyphicon-ok'></span>";
+                                }
+                            }
             ],
             //'created_at',
             //'updated_at',
