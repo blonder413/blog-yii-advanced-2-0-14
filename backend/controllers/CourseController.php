@@ -47,8 +47,8 @@ class CourseController extends Controller
             $model->file->saveAs( 'img/courses/' . $model->image);
             Yii::$app->session->setFlash('success', Yii::t('app', 'Course created successfully'));
           } else {
-            print_r($model->getErrors());
-            exit;
+//            print_r($model->getErrors());
+//            exit;
             $errors = '<ul>';
                foreach ($model->getErrors() as $key => $value) {
                    foreach ($value as $row => $field) {
@@ -136,8 +136,8 @@ class CourseController extends Controller
               }
               Yii::$app->session->setFlash('success', Yii::t('app', 'Course updated successfully'));
             } else {
-              print_r($model->getErrors());
-              exit;
+//              print_r($model->getErrors());
+//              exit;
               $errors = '<ul>';
                  foreach ($model->getErrors() as $key => $value) {
                      foreach ($value as $row => $field) {

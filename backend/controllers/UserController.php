@@ -124,9 +124,11 @@ class UserController extends Controller
                 $model->photo = Helper::limpiaUrl($model->username . '.' . $model->file->extension);
             } else {
               // si cambia el nombre del usuario renombro la imagen
-              $model->photo = Helper::limpiaUrl($model->username . '.jpg');
-              $oldImage = $model->oldAttributes['photo'];
-              rename('img/users/' . $oldImage, 'img/users/' . $model->photo);
+              if ($model->oldAttributes['username'] !== $model->username) {
+                $model->photo = Helper::limpiaUrl($model->username . '.jpg');
+                $oldImage = $model->oldAttributes['photo'];
+                rename('img/users/' . $oldImage, 'img/users/' . $model->photo);
+              }
             }
 
             if ($model->save()) {

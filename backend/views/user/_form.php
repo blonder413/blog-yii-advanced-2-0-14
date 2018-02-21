@@ -15,7 +15,11 @@ use common\models\User;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
+    <?php if($model->isNewRecord): ?>
+      <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
+    <?php else: ?>
+      <?= $form->field($model, 'username')->textInput(['maxlength' => true, 'disabled' => true]) ?>
+    <?php endif; ?>
 
     <?= $form->field($model, 'password_hash')->passwordInput(['maxlength' => true, 'value' => '']) ?>
 
