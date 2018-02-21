@@ -39,7 +39,7 @@ class TypeController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
-              Yii::$app->session->setFlash("success", Yii::t('app', "Type createed successfully!"));
+              Yii::$app->session->setFlash("success", Yii::t('app', "Type created successfully!"));
             } else {
                 $errors = '';
                 foreach ($model->getErrors() as $key => $value) {
@@ -123,7 +123,22 @@ class TypeController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        try{
+          if($this->findModel($id)->delete()) {
+            Yii::$app->session->setFlash("success", Yii::t('app', "Type deleted successfully!"));
+          } else {
+            $errors = '';
+            foreach ($model->getErrors() as $key => $value) {
+                foreach ($value as $row => $field) {
+                    //Yii::$app->session->setFlash("danger", $field);
+                    $errors .= $field . "<br>";
+                }
+            }
+            Yii::$app->session->setFlash("danger", $errors);
+          }
+        } catch (\Exception $e) {
+          Yii::$app->session->setFlash("warning", Yii::t('app', "Type can't be deleted!"));
+        }
 
         return $this->redirect(['index']);
     }

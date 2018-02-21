@@ -19,7 +19,7 @@ use \yii\db\ActiveRecord;
 
 use Yii;
 
-class MyActiveRecord extends ActiveRecord{
+class MyActiveRecord extends ActiveRecord {
     public function behaviors()
     {
         return [
