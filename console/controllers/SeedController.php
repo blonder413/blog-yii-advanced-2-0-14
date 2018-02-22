@@ -10,6 +10,8 @@ use yii\db\Expression;
 use yii\db\QueryBuilder;
 use yii\helpers\Console;
 
+use yii\rbac\DbManager;
+
 class SeedController extends Controller
 {
     public function actionIndex()
@@ -189,6 +191,71 @@ class SeedController extends Controller
             $this->stdout("inserted registers for comments table\n", Console::FG_GREEN);
 
             $transaction->commit();
+
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+    }
+    //----------------------------------------------- RBAC ----------------------------------------------
+
+    /**
+     * @throws yii\base\InvalidConfigException
+     * @return DbManager
+     */
+    protected function getAuthManager()
+    {
+        $authManager = Yii::$app->getAuthManager();
+        if (!$authManager instanceof DbManager) {
+            throw new InvalidConfigException('You should configure "authManager" component to use database before executing this migration.');
+        }
+
+        return $authManager;
+    }
+
+    public function actionRbac()
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+
+        try {
+          $auth = $this->getAuthManager();
+
+          $tables = ['article', 'category', 'comment', 'course', 'streaming', 'type'];
+          $permissions = ['create', 'delete', 'list', 'update', 'view'];
+
+          $role_admin = $auth->createRole('admin');
+          $role_admin->description = 'This user can admin the complete database';
+          $auth->add($role_admin);
+          $this->stdout("role admin has been created\n", Console::FG_GREEN);
+
+          for ($i = 0; $i < count($tables); $i++) {
+            $this->stdout("creating roles and permissions for $tables[$i] \n", Console::FG_YELLOW);
+
+            $role = $auth->createRole( $tables[$i] . '-admin');
+            $role->description = 'This user can admin all CRUD operations on ' . $tables[$i] . ' table';
+            $auth->add($role);
+
+            $auth->addChild($role_admin, $role);
+
+            for ($j = 0; $j < count($permissions); $j++) {
+              $permission = $auth->createPermission( $tables[$i] . '-' . $permissions[$j] );
+              $permission->description = 'This user can ' . $permissions[$j] . ' registers on ' .$tables[$i] . ' table';
+              $auth->add($permission);
+
+              $auth->addChild($role, $permission);
+            }
+
+            if ($tables[$i] == 'article' or $tables[$i] == 'comment') {
+              $permission = $auth->createPermission( $tables[$i] . '-change-status' );
+              $permission->description = 'This user can change the register status on ' .$tables[$i] . ' table';
+              $auth->add($permission);
+              $auth->addChild($role, $permission);
+            }
+
+            $this->stdout("roles and premissions for $tables[$i] have been created\n", Console::FG_GREEN);
+          }
+
+          $transaction->commit();
 
         } catch (\Exception $e) {
             $transaction->rollBack();

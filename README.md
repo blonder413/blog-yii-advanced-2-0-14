@@ -6,9 +6,12 @@ php init
 composer install
 ```
 ### Database and Seeder
-Configure db Connection in ```common/config/main-local.php```
+Configure db Connection in ```common/config/main-local.php``` and
+use the follow commands to create the project and RBAC tables
+
 ```
 ./yii migrate
+yii migrate --migrationPath=@yii/rbac/migrations
 ```
 
 The ```console/controllers/SeedController``` file contains the seeder configuration
