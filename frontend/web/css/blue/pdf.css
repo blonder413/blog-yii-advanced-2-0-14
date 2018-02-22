@@ -1,0 +1,40 @@
+body {
+	font-size: 14px;
+}
+
+h1{
+	font-size: 16px;
+	text-align: center;
+}
+
+.alert-warning{
+	background-color: #FFE4A4;
+	border: 1px solid #ffb100;
+	margin-top: 10px;
+	padding: 5px;
+}
+
+.content{
+	margin: 30px 0;
+}
+
+.data-author {
+	font-size: 12px;
+	font-style: italic;
+}
+
+.jumbotron {
+  background-color: #428bca;
+  color: #fff;
+  padding: 5px 0;
+  text-align: center;
+}
+
+.jumbotron h1{
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.text-center {
+	text-align: center;
+}

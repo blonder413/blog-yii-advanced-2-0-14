@@ -1,53 +1,109 @@
 <?php
-
+use kartik\alert\AlertBlock;
+use yii\helpers\Html;
+use yii\helpers\HtmlPurifier;
+use yii\widgets\Breadcrumbs;
+use yii\widgets\LinkPager;
 /* @var $this yii\web\View */
 
-$this->title = 'My Yii Application';
+setlocale(LC_TIME, 'es_CO.UTF-8');
+
+if (isset($_GET['page'])) {
+    $this->title = "Blonder413 - Página " . $_GET['page'];
+} else {
+    $this->title = "Blonder413";
+}
+
+// parámetros para el sidebar
+$this->params['categories'] = $categories;
+$this->params['most_visited'] = $most_visited;
+
 ?>
-<div class="site-index">
 
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
+<?php // echo Html::a("mi web", "@blonder413"); ?>
 
-        <p class="lead">You have successfully created your Yii-powered application.</p>
+<!-- <section class="posts col-md-9"> -->
 
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
+    <?= Breadcrumbs::widget([
+      'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+    ]) ?>
 
-    <div class="body-content">
+    <?= AlertBlock::widget([
+        'type' => AlertBlock::TYPE_ALERT,
+        'useSessionFlash' => true,
+        'delay' => 20000,
+    ]) ?>
 
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
+    <?php foreach ($articles as $key => $value): ?>
+    <article class="post clear-fix">
+          <?= Html::a(
+              Html::img(
+                  '@backend/img/categories/' . $value->category->slug . '.png',
+                  [
+                      // 'class' => 'img-circle',
+                      'alt'   => $value->category->category,
+                      'class' => 'img-thumbnail',
+                  ]
+              ),
+              ['/categoria/' . Html::encode("{$value->category->slug}")],
+              [
+                'class' => 'thumb pull-left',
+              ]
+          );
+          ?>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
+          <h3 class="post-title">
+            <?= Html::a(
+                Html::encode("{$value->title}"),
+                ['/articulo/' . Html::encode("{$value->slug}")],
+                [
+                  'title' => Html::encode("{$value->title}"),
+                ]
+            ) ?>
+          </h3>
 
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
+            <div class="post-date">
+                <span class="glyphicon glyphicon-user">&nbsp;</span><span class="post-author"><?= ucWords(HTml::encode("{$value->createdBy->name}")) ?></span>
+                &nbsp;|
+                <span class="glyphicon glyphicon-calendar">&nbsp;</span><?= strftime("%c", strtotime($value->created_at)) ?>
             </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
+          <p class="post-content">
+            <?= $value->abstract ?>
+          </p>
 
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
+          <div class="container-buttons">
+            <?= Html::a(
+                'Ver Más &raquo;',
+                ['/articulo/' . Html::encode("{$value->slug}")],
+                [
+                    'class' => 'btn btn-primary btn-sm',
+                    'title' => 'Ver artículo completo',
+                ]
+            ) ?>
+            <?= Html::a(
+                "Comentarios <span class='badge'>$value->commentsCount</span>",
+                ['/articulo/' . Html::encode("{$value->slug}") . '#comments'],
+                [
+                    'class' => 'btn btn-success btn-sm',
+                    'title' => 'Ver Comentarios',
+                ]
+            ) ?>
+          </div>
+    </article>
+    <?php endforeach; ?>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
+    <div class="row text-center"><?php echo LinkPager::widget(['pagination'=>$pagination]); ?></div>
 
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
-        </div>
-
-    </div>
-</div>
+<!--</section>-->
+<!--
+<aside class="hidden-xs hidden-sm col-md-3">
+    <?php /* echo $this->render(
+        '/site/_sidebar',
+        [
+            'categories'    => $categories,
+            'most_visited'  => $most_visited,
+        ]
+    ) */ ?>
+</aside>
+-->

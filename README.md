@@ -19,6 +19,13 @@ If you want to execute the seeder you have to run the console command
 ```
 ./yii seed
 ```
+### Layouts
+
+The frontend layout configuration is in ```frontend\config\main.php```
+```layout``` key.
+The CSS files for frontend layouts is en ```frontend\web\css\layout_name```
+where ```layout_name``` is the name of the folder layout in ```frontend\views\layouts```
+
 
 ### Extensions
 
@@ -51,6 +58,13 @@ composer require 2amigos/yii2-date-time-picker-widget:~1.0
 ```
 
 - Bootstrap DatePicker Widget for Yii2 (https://github.com/2amigos/yii2-date-picker-widget)
+
 ```
 composer require 2amigos/yii2-date-picker-widget:~1.0
+```
+
+- yii2-widget-alert (https://github.com/kartik-v/yii2-widget-alert)
+
+```
+composer require kartik-v/yii2-widget-alert "*"
 ```

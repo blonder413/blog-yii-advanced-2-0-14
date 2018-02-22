@@ -3,6 +3,7 @@ namespace frontend\controllers;
 
 use Yii;
 use yii\base\InvalidParamException;
+use yii\data\Pagination;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -12,6 +13,9 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+
+use frontend\models\Article;
+use frontend\models\Category;
 
 /**
  * Site controller
@@ -72,7 +76,28 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+      $query = Article::find();
+
+      $pagination = new Pagination([
+          'defaultPageSize'   => 20,
+          'totalCount'        => $query->count(),
+      ]);
+
+      $articles = $query->orderBy('id desc')
+                  ->offset($pagination->offset)
+                  ->limit($pagination->limit)
+                  ->all();
+
+      $categories = Category::find()->orderBy('category asc')->all();
+
+      $most_visited = Article::find()->orderBy('visit_counter desc')->limit(5)->all();
+
+      return $this->render('index', [
+          'articles'      => $articles,
+          'categories'    => $categories,
+          'most_visited'  => $most_visited,
+          'pagination'    => $pagination,
+      ]);
     }
 
     /**
