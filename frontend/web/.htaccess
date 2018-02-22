@@ -1,0 +1,15 @@
+RewriteEngine on 
+ 
+# If a directory or a file exists, use it directly 
+RewriteCond %{REQUEST_FILENAME} !-f 
+RewriteCond %{REQUEST_FILENAME} !-d 
+# Otherwise forward it to index.php 
+RewriteRule . index.php 
+
+#Asignar 31 días de caché a las imágenes y al css
+<ifmodule mod_expires.c>
+    <filesmatch "\.(jpg|JPG|jpeg|JPEG|gif|GIF|png|PNG|css|ico|js|JS)$">
+        ExpiresActive on
+        ExpiresDefault "access plus 31 days"
+    </filesmatch>
+</ifmodule>

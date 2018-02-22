@@ -52,14 +52,29 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
         'urlManager' => [
+            'class' => 'yii\web\UrlManager',
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'enableStrictParsing' => false,
             'rules' => [
+                'articulo/<slug>'           => 'site/article',
+                'articulo/descarga/<slug>'  => 'site/download',
+                'categoria/<slug>'          => 'site/category',
+                'curso/index'               => 'site/all-courses',
+                'curso/<slug>'              => 'site/course',
+                'etiqueta/<tag>'            => 'site/tag',
+                'acerca'                    => 'site/about',
+                'home'                      => 'site/index',
+                'contacto'                  => 'site/contact',
+                'login'                     => 'site/login',
+                "registro"                  => "site/signup",
+                'pdf/<slug>'                => 'site/pdf',
+                'portafolio'                => 'site/portfolio',
+                'en-vivo'                   => 'site/streaming',
+
             ],
         ],
-        */
     ],
     'params' => $params,
 ];

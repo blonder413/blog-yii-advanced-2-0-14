@@ -25,6 +25,7 @@ The frontend layout configuration is in ```frontend\config\main.php```
 ```layout``` key.
 The CSS files for frontend layouts is en ```frontend\web\css\layout_name```
 where ```layout_name``` is the name of the folder layout in ```frontend\views\layouts```
+The images for layouts must be in ```frontend\web\img``` folder
 
 
 ### Extensions
