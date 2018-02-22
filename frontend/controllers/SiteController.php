@@ -158,6 +158,20 @@ class SiteController extends Controller
         }
     }
 
+    public function actionPortfolio()
+    {
+        $categories = Category::find()->orderBy('category asc')->all();
+        $most_visited = Article::find()->orderBy('visit_counter desc')->limit(5)->all();
+
+        return $this->render(
+            'portfolio',
+            [
+                'categories'    => $categories,
+                'most_visited'  => $most_visited,
+            ]
+        );
+    }
+
     /**
      * Displays about page.
      *
