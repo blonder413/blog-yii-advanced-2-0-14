@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
+    <?php if (Yii::$app->user->can('type-create')): ?>
     <p>
       <?php
       Modal::begin([
@@ -29,6 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
       Modal::end();
       ?>
     </p>
+    <?php endif; ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
