@@ -22,6 +22,13 @@ If you want to execute the seeder you have to run the console command
 ```
 ./yii seed
 ```
+
+If you want insert roles and premissions by default, you have to run the following commands
+
+```
+./yii seed/rbac
+```
+
 ### Layouts
 
 The frontend layout configuration is in ```frontend\config\main.php```

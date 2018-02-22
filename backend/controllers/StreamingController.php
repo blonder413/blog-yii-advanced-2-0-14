@@ -6,6 +6,7 @@ use Yii;
 use backend\models\Streaming;
 use backend\models\StreamingSearch;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -35,6 +36,10 @@ class StreamingController extends Controller
      */
     public function actionIndex()
     {
+        if ( !\Yii::$app->user->can('streaming-list')) {
+          throw new ForbiddenHttpException("Access denied");
+        }
+
         $searchModel = new StreamingSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -64,6 +69,10 @@ class StreamingController extends Controller
      */
     public function actionCreate()
     {
+        if ( !\Yii::$app->user->can('streaming-create')) {
+          throw new ForbiddenHttpException("Access denied");
+        }
+
         $model = new Streaming();
 
         if ($model->load(Yii::$app->request->post())) {
@@ -115,6 +124,10 @@ class StreamingController extends Controller
      */
     public function actionUpdate($id)
     {
+      if ( !\Yii::$app->user->can('streaming-update')) {
+        throw new ForbiddenHttpException("Access denied");
+      }
+
       $model = $this->findModel($id);
 
       if ($model->load(Yii::$app->request->post())) {
@@ -151,6 +164,10 @@ class StreamingController extends Controller
      */
      public function actionDelete($id)
      {
+         if ( !\Yii::$app->user->can('streaming-delete')) {
+           throw new ForbiddenHttpException("Access denied");
+         }
+
          try{
            if($this->findModel($id)->delete()) {
              Yii::$app->session->setFlash("success", Yii::t('app', "Streaming deleted successfully!"));

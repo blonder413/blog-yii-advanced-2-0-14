@@ -7,6 +7,7 @@ use backend\models\Category;
 use backend\models\CategorySearch;
 use backend\models\Helper;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
@@ -37,6 +38,10 @@ class CategoryController extends Controller
      */
     public function actionIndex()
     {
+        if ( !\Yii::$app->user->can('category-list')) {
+          throw new ForbiddenHttpException("Access denied");
+        }
+
         $model = new Category(['scenario' => 'create']);
         if ($model->load(Yii::$app->request->post())) {
 
@@ -81,6 +86,10 @@ class CategoryController extends Controller
      */
     public function actionView($id)
     {
+        if ( !\Yii::$app->user->can('category-view')) {
+          throw new ForbiddenHttpException("Access denied");
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -93,6 +102,10 @@ class CategoryController extends Controller
      */
     public function actionCreate()
     {
+        if ( !\Yii::$app->user->can('category-create')) {
+          throw new ForbiddenHttpException("Access denied");
+        }
+
         $model = new Category();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -114,6 +127,10 @@ class CategoryController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+
+        if (!\Yii::$app->user->can('category-update')) {
+            throw new ForbiddenHttpException("Access denied");
+        }
 
         if ($model->load(Yii::$app->request->post())) {
             $model->file = UploadedFile::getInstance($model, 'file');
@@ -169,6 +186,10 @@ class CategoryController extends Controller
      */
     public function actionDelete($id)
     {
+        if (!\Yii::$app->user->can('category-delete')) {
+            throw new ForbiddenHttpException("Access denied");
+        }
+
         try{
           $model = $this->findModel($id);
           if($model->delete()) {

@@ -175,7 +175,7 @@ class SeedController extends Controller
                         [
                             $faker->firstName,
                             $faker->freeEmail,
-                            $faker->url,
+                            $faker->word,
                             'no follow',
                             $faker->text(200),
                             new Expression('NOW()'),
@@ -220,8 +220,8 @@ class SeedController extends Controller
         try {
           $auth = $this->getAuthManager();
 
-          $tables = ['article', 'category', 'comment', 'course', 'streaming', 'type'];
-          $permissions = ['create', 'delete', 'list', 'update', 'view'];
+          $tables = ['article', 'category', 'comment', 'course', 'streaming', 'type', 'user'];
+          $permissions = ['create', 'delete', 'update', 'view', 'list'];
 
           $role_admin = $auth->createRole('admin');
           $role_admin->description = 'This user can admin the complete database';
@@ -245,15 +245,27 @@ class SeedController extends Controller
               $auth->addChild($role, $permission);
             }
 
-            if ($tables[$i] == 'article' or $tables[$i] == 'comment') {
-              $permission = $auth->createPermission( $tables[$i] . '-change-status' );
-              $permission->description = 'This user can change the register status on ' .$tables[$i] . ' table';
-              $auth->add($permission);
-              $auth->addChild($role, $permission);
+            if ($tables[$i] == 'article' or $tables[$i] == 'comment' or $tables[$i] == 'user') {
+              $permission_status = $auth->createPermission( $tables[$i] . '-change-status' );
+              $permission_status->description = 'This user can change the register status on ' .$tables[$i] . ' table';
+              $auth->add($permission_status);
+              $auth->addChild($role, $permission_status);
+              $auth->addChild($permission_status, $permission);
+
             }
 
             $this->stdout("roles and premissions for $tables[$i] have been created\n", Console::FG_GREEN);
           }
+
+          //------------------------------------------------------------------------------------------------
+
+          // user can update only their own registers
+          $rule = new \backend\rbac\AuthorRule;
+          $auth->add($rule);
+
+          // users can access only their own view
+          $rule = new \backend\rbac\MyselfRule;
+          $auth->add($rule);
 
           $transaction->commit();
 

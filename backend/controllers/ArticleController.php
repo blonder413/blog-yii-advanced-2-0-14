@@ -7,6 +7,7 @@ use backend\models\Article;
 use backend\models\ArticleSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\filters\VerbFilter;
 
 /**
@@ -35,6 +36,10 @@ class ArticleController extends Controller
      */
     public function actionIndex()
     {
+        if ( !\Yii::$app->user->can('article-list')) {
+            throw new ForbiddenHttpException("Access denied");
+        }
+
         $searchModel = new ArticleSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -53,6 +58,10 @@ class ArticleController extends Controller
      */
     public function actionChangeStatus($id)
     {
+      if ( !\Yii::$app->user->can('article-change-status')) {
+          throw new ForbiddenHttpException("Access denied");
+      }
+
       $model = $this->findModel($id);
 
       if ($model->status == $model::STATUS_INACTIVE) {
@@ -79,6 +88,10 @@ class ArticleController extends Controller
      */
     public function actionView($id)
     {
+        if ( !\Yii::$app->user->can('article-view')) {
+            throw new ForbiddenHttpException("Access denied");
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -91,6 +104,10 @@ class ArticleController extends Controller
      */
     public function actionCreate()
     {
+        if ( !\Yii::$app->user->can('article-create')) {
+            throw new ForbiddenHttpException("Access denied");
+        }
+
         $model = new Article();
 
         if ($model->load(Yii::$app->request->post())) {
@@ -150,6 +167,10 @@ class ArticleController extends Controller
     {
         $model = $this->findModel($id);
 
+        if ( !\Yii::$app->user->can('admin') and !\Yii::$app->user->can('article-update', ['article' => $model])) {
+            throw new ForbiddenHttpException("Access denied");
+        }
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
         }
@@ -170,6 +191,11 @@ class ArticleController extends Controller
     {
         try{
           $model = $this->findModel($id);
+
+          if ( !\Yii::$app->user->can('admin') and !\Yii::$app->user->can('article-delete', ['article' => $model])) {
+              throw new ForbiddenHttpException("Access denied");
+          }
+
           if($model->delete()) {
             Yii::$app->session->setFlash("success", Yii::t('app', "Article deleted successfully!"));
           } else {

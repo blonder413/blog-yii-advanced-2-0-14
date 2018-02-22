@@ -6,6 +6,7 @@ use Yii;
 use backend\models\Type;
 use backend\models\TypeSearch;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -35,6 +36,10 @@ class TypeController extends Controller
      */
     public function actionIndex()
     {
+        if ( !\Yii::$app->user->can('type-list')) {
+          throw new ForbiddenHttpException("Access denied");
+        }
+
         $model = new Type();
 
         if ($model->load(Yii::$app->request->post())) {
@@ -71,6 +76,10 @@ class TypeController extends Controller
      */
     public function actionView($id)
     {
+        if ( !\Yii::$app->user->can('type-view')) {
+          throw new ForbiddenHttpException("Access denied");
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -83,6 +92,10 @@ class TypeController extends Controller
      */
     public function actionCreate()
     {
+        if ( !\Yii::$app->user->can('type-create')) {
+          throw new ForbiddenHttpException("Access denied");
+        }
+
         $model = new Type();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -103,6 +116,10 @@ class TypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        if ( !\Yii::$app->user->can('type-update')) {
+          throw new ForbiddenHttpException("Access denied");
+        }
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -123,6 +140,10 @@ class TypeController extends Controller
      */
     public function actionDelete($id)
     {
+        if ( !\Yii::$app->user->can('type-delete')) {
+          throw new ForbiddenHttpException("Access denied");
+        }
+
         try{
           if($this->findModel($id)->delete()) {
             Yii::$app->session->setFlash("success", Yii::t('app', "Type deleted successfully!"));
