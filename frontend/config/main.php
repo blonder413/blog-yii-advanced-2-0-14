@@ -23,6 +23,7 @@ return [
         '@youtube'      => 'https://www.youtube.com/channel/UCOBMvNSxe08V5E9qExfFt4Q',
     ],
     'id' => 'app-frontend',
+    //'catchAll' => ['site/offline'],
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',

@@ -158,6 +158,17 @@ class SiteController extends Controller
         }
     }
 
+    /**
+     * Displays offline page.
+     *
+     * @return string
+     */
+    public function actionOffline()
+    {
+        $this->layout = false;
+        return $this->render('offline');
+    }
+
     public function actionPortfolio()
     {
         $categories = Category::find()->orderBy('category asc')->all();
