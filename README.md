@@ -37,6 +37,13 @@ The CSS files for frontend layouts is en ```frontend\web\css\layout_name```
 where ```layout_name``` is the name of the folder layout in ```frontend\views\layouts```
 The images for layouts must be in ```frontend\web\img``` folder
 
+### turn on maintenance
+
+When you need to do changes in the web, you can turn on maintenance mode,
+for that you need uncomment ```catchAll``` key on ```frontend/config/main.php``` file.
+The file ```frontend/views/site/offline.php``` will be rendering, you can personalize this page
+and change the page you want to be rendering in ```frontend/config/main.php``` on ```catchAll``` key.
+
 
 ### Extensions
 
