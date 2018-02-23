@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="course-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <!-- <h1><?= Html::encode($this->title) ?></h1> -->
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php if (Yii::$app->user->can('course-create')): ?>
@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'id',
             'course',
             //'slug',
-            'description:ntext',
+            //'description:ntext',
             //'image',
             [
                 'attribute' => 'created_by',

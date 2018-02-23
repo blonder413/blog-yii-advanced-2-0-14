@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="article-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <!-- <h1><?= Html::encode($this->title) ?></h1> -->
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php if (Yii::$app->user->can('article-create')): ?>
@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             //'id',
-            'number',
+            //'number',
             'title',
             //'slug',
             //'topic',
@@ -55,12 +55,12 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             //'tags',
             //'status',
-            'visit_counter',
-            [
-                'attribute' => 'commentsCount',
-                'format'      => 'raw',
-                'value'     => 'commentsCount',
-            ],
+            //'visit_counter',
+            //[
+            //    'attribute' => 'commentsCount',
+            //    'format'      => 'raw',
+            //    'value'     => 'commentsCount',
+            //],
             //'download_counter',
             [
                 'attribute' => 'course_id',

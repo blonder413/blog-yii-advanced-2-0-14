@@ -99,3 +99,9 @@ composer require kartik-v/yii2-widget-alert "*"
 ```
 composer require kartik-v/yii2-widget-growl "*"
 ```
+
+- yii2-adminlte-asset (http://www.yiiframework.com/extension/yii2-adminlte-asset/)
+
+```
+composer require dmstr/yii2-adminlte-asset "*"
+```
