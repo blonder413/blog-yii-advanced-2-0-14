@@ -29,7 +29,6 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <link href="css/blue/style.css" rel="stylesheet" type="text/css">
     <link href="img/favicon.png" rel="icon" type="image/vnd.microsoft.icon"/>
     <!--<link rel="image_src" href="<?php //echo Yii::$app->homeUrl . 'web/img/' . $this->image_src . '.png' ?>">-->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
@@ -454,6 +453,7 @@ AppAsset::register($this);
     <!-- /Diseño del reproductor de videos -->
 
     <!-- Smartsupp Live Chat script -->
+<!--
     <script type="text/javascript">
     var _smartsupp = _smartsupp || {};
     _smartsupp.key = '1388fee2a7b9efb38a5ff5a6421028fdaa9c370f';
@@ -464,6 +464,7 @@ AppAsset::register($this);
         c.src='//www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
     })(document);
     </script>
+-->
     <!-- End Smartsupp Live Chat script -->
 </body>
 </html>

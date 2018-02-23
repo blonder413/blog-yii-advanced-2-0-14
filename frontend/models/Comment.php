@@ -1,7 +1,7 @@
 <?php
 
 namespace frontend\models;
-
+use common\models\Security;
 use Yii;
 
 /**
@@ -51,6 +51,7 @@ class Comment extends \yii\db\ActiveRecord
             [['status'], 'string', 'max' => 1],
             [['client_ip'], 'string', 'max' => 15],
             [['client_port'], 'string', 'max' => 5],
+            [['verifyCode'], 'captcha', 'on'=>'comment'],
             [['article_id'], 'exist', 'skipOnError' => true, 'targetClass' => Article::className(), 'targetAttribute' => ['article_id' => 'id']],
         ];
     }
@@ -73,6 +74,30 @@ class Comment extends \yii\db\ActiveRecord
             'client_ip' => Yii::t('app', 'Client Ip'),
             'client_port' => Yii::t('app', 'Client Port'),
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        /*
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->email = Security::mcrypt($this->email);
+            }
+
+            return true;
+        }
+        */
+
+        if (parent::beforeSave($insert)) {
+            if ($insert) {
+                $this->email = Security::mcrypt($this->email);
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**

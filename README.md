@@ -5,6 +5,11 @@ cd blog-yii-advanced-2-0-14/
 php init
 composer install
 ```
+
+Also is important you configure ```frontend\config\params-local.php```,
+specially ```securityKey```, this is the secure key for email encryptation
+from user comments
+
 ### Database and Seeder
 Configure db Connection in ```common/config/main-local.php``` and
 use the follow commands to create the project and RBAC tables
@@ -36,6 +41,8 @@ The frontend layout configuration is in ```frontend\config\main.php```
 The CSS files for frontend layouts is en ```frontend\web\css\layout_name```
 where ```layout_name``` is the name of the folder layout in ```frontend\views\layouts```
 The images for layouts must be in ```frontend\web\img``` folder
+
+You need to add the CSS files to ```frontend\web\assets\AppAsset.php```.
 
 ### turn on maintenance
 
@@ -85,4 +92,10 @@ composer require 2amigos/yii2-date-picker-widget:~1.0
 
 ```
 composer require kartik-v/yii2-widget-alert "*"
+```
+
+- yii2-widget-growl
+
+```
+composer require kartik-v/yii2-widget-growl "*"
 ```

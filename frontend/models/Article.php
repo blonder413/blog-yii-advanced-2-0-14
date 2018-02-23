@@ -1,6 +1,13 @@
 <?php
 
 namespace frontend\models;
+
+use \yii\behaviors\BlameableBehavior;
+use \yii\behaviors\SluggableBehavior;
+use \yii\db\ActiveRecord;
+use \yii\db\Expression;
+use \yii\helpers\Url;
+
 use common\models\User;
 use Yii;
 
@@ -52,14 +59,14 @@ class Article extends \yii\db\ActiveRecord
     {
         return [
             [['number', 'type_id', 'category_id', 'visit_counter', 'download_counter', 'course_id', 'created_by', 'updated_by'], 'integer'],
-            [['title', 'slug', 'detail', 'abstract', 'type_id', 'category_id', 'tags', 'status', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'required'],
+            [['title', 'slug', 'detail', 'abstract', 'type_id', 'category_id', 'tags'], 'required'],
             [['detail'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['title', 'slug'], 'string', 'max' => 150],
             [['topic', 'download'], 'string', 'max' => 100],
             [['abstract'], 'string', 'max' => 300],
             [['video', 'tags'], 'string', 'max' => 255],
-            [['status'], 'string', 'max' => 1],
+            [['status'], 'boolean'],
             [['title'], 'unique'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['course_id'], 'exist', 'skipOnError' => true, 'targetClass' => Course::className(), 'targetAttribute' => ['course_id' => 'id']],
@@ -95,6 +102,30 @@ class Article extends \yii\db\ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'updated_at' => Yii::t('app', 'Updated At'),
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+//            'timestamp' => [
+//                'class' => 'yii\behaviors\TimestampBehavior',
+//                'attributes' => [
+//                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+//                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+//                ],
+//                'value' => new Expression('NOW()'),
+//            ],
+//            'blameable' => [
+//                'class' => BlameableBehavior::className(),
+//                'createdByAttribute' => 'created_by',
+//                'updatedByAttribute' => 'updated_by',
+//            ],
+            [
+                'class' => SluggableBehavior::className(),
+                'attribute' => 'title',
+                //'slugAttribute' => 'seo_slug',
+            ],
         ];
     }
 
