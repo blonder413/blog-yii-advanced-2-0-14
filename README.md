@@ -28,7 +28,19 @@ If you want to execute the seeder you have to run the console command
 ./yii seed
 ```
 
-If you want insert roles and premissions by default, you have to run the following commands
+If you want insert roles and premissions by default, you have to configure the securityKey
+in ```common\config\params-local.php```
+
+<?php
+return [
+    'adminEmail'                    => 'admin@gemail.com',
+    'supportEmail'                  => 'admin@email.com',
+    'user.passwordResetTokenExpire' => 3600,
+    'securityKey'                   => 'mi-clave-privada-413',
+];
+
+
+you have to run the following commands
 
 ```
 ./yii seed/rbac

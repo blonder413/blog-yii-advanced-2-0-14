@@ -174,7 +174,7 @@ class SeedController extends Controller
                     [
                         [
                             $faker->firstName,
-                            $faker->freeEmail,
+                            \common\models\Security::mcrypt($faker->freeEmail),
                             $faker->word,
                             'no follow',
                             $faker->text(200),

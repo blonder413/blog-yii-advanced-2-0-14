@@ -72,11 +72,32 @@ class CommentController extends Controller
         }
 
         $searchModel = new CommentSearch();
+        $pending = Comment::find('status = 0')->count();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'pending' => $pending,
+        ]);
+    }
+
+    /**
+     * Lists all Comment models.
+     * @return mixed
+     */
+    public function actionIndexAjax()
+    {
+//        $this->layout = 'adminLTE/main';
+
+        $searchModel = new CommentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $pending = Comment::find('status = 0')->count();
+
+        return $this->renderAjax('_index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'pending'       => $pending,
         ]);
     }
 

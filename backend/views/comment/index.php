@@ -2,88 +2,109 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use backend\models\Comment;
+use common\models\Security;
+use kartik\alert\AlertBlock;
+
+use \yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel backend\models\CommentSearch */
+/* @var $searchModel app\models\CommentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Comments');
+$this->title =  Html::encode( '(' . $pending . ') Comments');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="comment-index">
 
-    <!-- <h1><?= Html::encode($this->title) ?></h1> -->
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+<?php
 
-    <?php if (Yii::$app->user->can('comment-create')): ?>
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Comment'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-    <?php endif; ?>
+$script = <<< JS
+$(document).ready(function() {
+//    setInterval(function() {
+//      $.pjax.reload({container:'#result_ajax'});
+//    }, 450000);
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
 
-            //'id',
-            'name',
-            'email:email',
-            //'web',
-            //'rel',
-            //'comment:ntext',
-            'date',
-            //'article_id',
-//            [
-//                'attribute' => 'article_id',
-//                'format'    => 'raw',
-//                'value'     => function ($searchModel) {
-//                    return Html::a($searchModel->article->title, "@web/articulo/" . $searchModel->article->slug);
-//                },
-//            ],
-            //'status',
-            //'client_ip',
-            //'client_port',
+    setInterval(function() {
+//        var id = $("#id").val();
+        var pending = $pending;
+        // use the first if you active pretty URL
+        //$("#result_ajax").load("comment/index-ajax",{pending:pending},function(){});
+        $("#result_ajax").load("index.php?r=comment/index-ajax",{pending:pending},function(){});
+    }, 1000 * 60 * 10); // 1000ms * 60seg * 10min = 10min
 
-            //['class' => 'yii\grid\ActionColumn'],
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {update} {delete} {approve}',
-                'buttons' => [
-                    'approve' => function ($url, $model, $key) {
-                        if ($model->status === 0) {
-                            return Html::a('<span class="glyphicon glyphicon-thumbs-up"></span>', $url,
-                                [ 'title' => Yii::t('app', 'Approve comment'), ]
-                            );
-                        }
-                    },
-                    'update' => function ($url, $model, $key) {
-                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url,
-                            [ 'title' => Yii::t('app', 'Actualizar'), ]
-                        );
-                    }
-                ],
-                'urlCreator' => function ($action, $model, $key, $index) {
-                    if ($action === 'approve') {
-                        return yii\helpers\Url::to(['comment/approve', 'id' => $key]);
-                    } elseif ($action == 'update') {
-                        return yii\helpers\Url::to(['comment/update/', 'id' => $key]);
-                    } elseif ($action === 'delete') {
-                        return yii\helpers\Url::to(['comment/delete/', 'id' => $key]);
-                    } elseif ($action === 'view') {
-                        return yii\helpers\Url::to(['comment/view/', 'id' => $key]);
-                    }
-                }
-            ],
-        ],
-        'rowOptions'    => function($model){
-            if ($model->status == Comment::STATUS_INACTIVE) {
-                return ['class' => 'danger'];
-            } elseif ($model->status == Comment::STATUS_ACTIVE) {
-                return ['class' => 'success'];
-            }
-        },
-    ]); ?>
+});
+JS;
+$this->registerJs($script);
+?>
+
+<?php
+/*
+echo AlertBlock::widget([
+    'type' => AlertBlock::TYPE_ALERT,
+    'useSessionFlash' => true,
+    //'delay'     => 10000,
+    'delay'     => 1000,
+]);
+*/
+?>
+
+<div class="comment-index row">
+    <!--
+    <div class="col-xs-hidden col-md-12">
+        <div class="list-group">
+          <h4>Chat</h4>
+
+        <script id="sid0010000038030679890">(function() {
+                        function async_load() {
+                            s.id = "cid0010000038030679890";
+                            s.src = 'http://st.chatango.com/js/gz/emb.js';
+                            s.style.cssText = "width:100%;height:300px;";
+                            s.async = true;
+                            s.text = '{"handle":"Blonder413Hall","styles":{"a":"ffffff","b":60,"c":"4E4B58","d":"002255","f":50,"l":"AAAACC","m":"002255","n":"FFFFFF","q":"999999","r":100,"s":1,"w":0}}';
+                            var ss = document.getElementsByTagName('script');
+                            for (var i = 0, l = ss.length; i < l; i++) {
+                                if (ss[i].id == 'sid0010000038030679890') {
+                                    ss[i].id += '_';
+                                    ss[i].parentNode.insertBefore(s, ss[i]);
+                                    break;
+                                }
+                      }
+                  }
+                  var s = document.createElement('script');
+                  if (s.async == undefined) {
+                      if (window.addEventListener) {
+                          addEventListener('load', async_load, false);
+                      } else if (window.attachEvent) {
+                          attachEvent('onload', async_load);
+                      }
+                  } else {
+                      async_load();
+                  }
+        })();</script>
+      </div>
+    </div>
+    -->
+    <div class="col-sm-12">
+        <h1><?= Html::encode($this->title) ?></h1>
+        <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
+        <p>
+            <?= Html::a('Create Comment', ['create'], ['class' => 'btn btn-success']) ?>
+        </p>
+
+        <?php Pjax::begin(); ?>
+        <div id="result_ajax">
+            <!-- Muestro algo cuando carga la página por primera vez -->
+            <?php $pending = backend\models\Comment::find()->where(['status' => 0])->count(); ?>
+            <?= $this->renderAjax('_index',
+                [
+                    'searchModel'   => $searchModel,
+                    'dataProvider'  => $dataProvider,
+                    'pending'       => $pending,
+                ], null
+            ); ?>
+            <!-- /Muestro algo cuando carga la página por primera vez -->
+        </div>
+        <?php Pjax::end(); ?>
+    </div>
 </div>
