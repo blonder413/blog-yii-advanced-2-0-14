@@ -144,3 +144,9 @@ composer require --prefer-dist imanilchaudhari/yii2-rrssb "dev-master"
 ```
 composer require robregonm/yii2-pdf "*"
 ```
+
+- Yii 2.0: yii2-rss-writer-module (http://www.yiiframework.com/extension/yii2-rss-writer-module/)
+
+```
+composer require --prefer-dist "himiklab/yii2-rss-writer-module" "*"
+```
