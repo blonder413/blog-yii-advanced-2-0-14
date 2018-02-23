@@ -3,7 +3,7 @@ use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
-use app\assets\AppAsset;
+use backend\assets\AppAsset;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -41,7 +41,7 @@ AppAsset::register($this);
 	<div class="content">
 		<?= $content ?>
 	</div>
-    
+
 	<footer class="text-center">
         <hr>
         <a rel="license" href="http://creativecommons.org/licenses/by-sa/2.5/co/">

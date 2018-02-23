@@ -1,27 +1,26 @@
 <?php
 
+use yii\helpers\Html;
+
 /* @var $this yii\web\View */
 /* @var $name string */
 /* @var $message string */
 /* @var $exception Exception */
 
-use yii\helpers\Html;
-
 $this->title = $name;
 ?>
 <div class="site-error">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <?php if ($exception->statusCode == 404): ?>
 
-    <div class="alert alert-danger">
-        <?= nl2br(Html::encode($message)) ?>
-    </div>
+    <?= $this->render("_404", ["message" => $message]) ?>
 
-    <p>
-        The above error occurred while the Web server was processing your request.
-    </p>
-    <p>
-        Please contact us if you think this is a server error. Thank you.
-    </p>
+    <?php elseif ($exception->statusCode == 403): ?>
+
+    <?= $this->render("_403", ["message" => $message]) ?>
+
+    <?php else: ?>
+        <h1><?= Html::encode($this->title) ?></h1>
+    <?php endif; ?>
 
 </div>

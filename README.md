@@ -63,6 +63,15 @@ for that you need uncomment ```catchAll``` key on ```frontend/config/main.php```
 The file ```frontend/views/site/offline.php``` will be rendering, you can personalize this page
 and change the page you want to be rendering in ```frontend/config/main.php``` on ```catchAll``` key.
 
+### Mailer
+
+Si you have an error like this
+
+```
+Expected response code 250 but got code "550", with message "550 Request failed; Mailbox unavailable"
+```
+
+You have to configure your email for third party applications
 
 ### Extensions
 
@@ -116,4 +125,22 @@ composer require kartik-v/yii2-widget-growl "*"
 
 ```
 composer require dmstr/yii2-adminlte-asset "*"
+```
+
+- Lightbox Widget for Yii 2 (https://github.com/BranchOnline/yii2-lightbox)
+
+```
+composer require --prefer-dist branchonline/yii2-lightbox "*"
+```
+
+- Yii 2.0: yii2-rrssb (http://www.yiiframework.com/extension/yii2-rrssb/)
+
+```
+composer require --prefer-dist imanilchaudhari/yii2-rrssb "dev-master"
+```
+
+- Yii2-PDF (https://github.com/robregonm/yii2-pdf)
+
+```
+composer require robregonm/yii2-pdf "*"
 ```

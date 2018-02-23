@@ -29,7 +29,7 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <link href="img/favicon.png" rel="icon" type="image/vnd.microsoft.icon"/>
+    <link href="@web/img/favicon.png" rel="icon" type="image/vnd.microsoft.icon"/>
     <!--<link rel="image_src" href="<?php //echo Yii::$app->homeUrl . 'web/img/' . $this->image_src . '.png' ?>">-->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="alternate" type="application/rss+xml" title="RSS feed" href="/rss.xml" />

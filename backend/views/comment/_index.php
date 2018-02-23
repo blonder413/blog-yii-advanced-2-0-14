@@ -21,25 +21,25 @@ echo GridView::widget([
                 }
             ],
             // 'web',
-            [
-                'attribute' => 'web',
-                'format'    => 'url',
-            ],
+            //[
+            //    'attribute' => 'web',
+            //    'format'    => 'url',
+            //],
             // 'rel',
-            'comment:ntext',
+            //'comment:ntext',
             // 'date',
             [
                 'attribute' => 'date',
                 'format' => ['date', 'php:D d M Y H:i:s'],
             ],
             // 'article_id',
-            [
-                'attribute' => 'article_id',
-                'format'    => 'raw',
-                'value'     => function ($searchModel) {
-                    return Html::a($searchModel->article->title, "@web/articulo/" . $searchModel->article->slug);
-                },
-            ],
+            //[
+            //    'attribute' => 'article_id',
+            //    'format'    => 'raw',
+            //    'value'     => function ($searchModel) {
+            //        return Html::a($searchModel->article->title, "@web/articulo/" . $searchModel->article->slug);
+            //    },
+            //],
             //'status',
             // [
             //    'attribute' => 'status',

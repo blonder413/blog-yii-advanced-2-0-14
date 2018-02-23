@@ -7,6 +7,7 @@ use yii\data\Pagination;
 use \yii\db\Expression;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
@@ -19,6 +20,7 @@ use frontend\models\Article;
 use frontend\models\Category;
 use frontend\models\Comment;
 use frontend\models\Course;
+use frontend\models\Streaming;
 use common\models\Helper;
 use common\models\Security;
 
@@ -170,6 +172,167 @@ class SiteController extends Controller
         ]);
     }
 
+    public function actionPdf($slug)
+    {
+        Yii::$app->response->format = 'pdf';
+/*
+        // Rotate the page
+        Yii::$container->set(Yii::$app->response->formatters['pdf']['class'], [
+            'format' => [216, 356], // Legal page size in mm
+            'orientation' => 'Landscape', // This value will be used when 'format' is an array only. Skipped when 'format' is empty or is a string
+            'beforeRender' => function($mpdf, $data) {},
+            ]);
+*/
+
+        $article = Article::find()->where( 'slug = :slug', [':slug' => $slug] )->one();
+
+        if (sizeof($article) == 0) {
+            throw new NotFoundHttpException();
+        }
+
+        //$this->layout = '//print';
+        $this->layout = 'blue/pdf';
+
+        return $this->render('pdf', [
+            'article'   => $article,
+        ]);
+    }
+
+    /**
+     * Download a file
+     * if is a guest increment de download_counter
+     * @return file to download
+     */
+    public function actionDownload($slug)
+    {
+        /*
+         * ALTER TABLE article ADD COLUMN `download_counter` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `visit_counter`;
+         */
+        $article = Article::find()->where( 'slug = :slug', [':slug' => $slug] )->one();
+
+        if (empty($article->download)) {
+            Yii::$app->session->setFlash('download_error', 'No existe una descarga para este artículo');
+            return $this->redirect(['articulo/' . $slug]);
+        } else {
+            if (Yii::$app->user->isGuest) {
+                $article->download_counter += 1;
+                $article->update();
+            }
+
+            $filename = \yii\helpers\Html::encode($article->download);
+
+            return $this->redirect($filename);
+
+//            $response = Yii::$app->getResponse();
+//            $response->headers->set('Content-Type', 'application/zip');
+//            $response->headers->set('Content-Type', 'application/force-download');
+//            $response->headers->set('Content-Disposition', 'attachment; filename=' . $filename);
+//            $response->headers->set('Content-Transfer-Encoding', 'binary');
+//            $response->format = \yii\web\Response::FORMAT_RAW;
+
+//            Yii::$app->response->setDownloadHeaders($filename);
+
+
+            /*
+             * -----------------------------------------------------------------
+            if ( !is_resource($response->stream = fopen($filename, 'r')) ) {
+                throw new \yii\web\ServerErrorHttpException('file access failed: permission deny');
+            }
+            return $response->send();
+             * -----------------------------------------------------------------
+             */
+
+
+            /*
+             * -----------------------------------------------------------------
+            header("Content-disposition: attachment; filename=$filename");
+            header("Content-type: application/zip");
+            readfile($filename);
+             * -----------------------------------------------------------------
+            */
+
+        }
+
+    }
+
+    /**
+     * find articles by tag
+     * @param string $tag tag of article
+     * @return object
+     */
+    public function actionTag($tag)
+    {
+        $query = Article::find()->where(["like", "tags", $tag]);
+
+        $pagination = new Pagination([
+            'defaultPageSize'   => 20,
+            'totalCount'        => $query->count(),
+        ]);
+
+        $articles = Article::find()
+                ->where(["like", "tags", $tag])
+                ->orderBy("id desc")
+                ->offset($pagination->offset)
+                ->limit($pagination->limit)
+                ->all();
+
+        $categories = Category::find()->orderBy('category asc')->all();
+
+        $most_visited = Article::find()->orderBy('visit_counter desc')->limit(5)->all();
+
+        return $this->render(
+            'tag',
+            [
+                'articles'      => $articles,
+                'categories'    => $categories,
+                'most_visited'  => $most_visited,
+                'pagination'    => $pagination,
+                'tag'           => $tag,
+            ]
+        );
+    }
+
+    /**
+     * find articles by category
+     * @param string $tag tag of article
+     * @return object
+     */
+    public function actionCategory($slug)
+    {
+//        $this->layout = 'blue/main';
+
+        $category = Category::find()->where("slug = :slug", [':slug' => $slug])->one();
+
+        $query = Article::find()->where("category_id = :category_id", [':category_id' => $category->id]);
+
+        $pagination = new Pagination([
+            'defaultPageSize'   => 20,
+            'totalCount'        => $query->count(),
+        ]);
+
+        $articles = Article::find()
+                ->where("category_id = :category_id", [':category_id' => $category->id])
+                ->orderBy("id desc")
+                ->offset($pagination->offset)
+                ->limit($pagination->limit)
+                ->all();
+
+        $categories = Category::find()->orderBy('category asc')->all();
+
+        $most_visited = Article::find()->orderBy('visit_counter desc')->limit(5)->all();
+
+        return $this->render(
+            'category',
+            [
+                'articles'      => $articles,
+                'categories'    => $categories,
+                'category'      => $category,
+                'most_visited'  => $most_visited,
+                'pagination'    => $pagination,
+            ]
+        );
+    }
+
     /**
      * Displays homepage.
      *
@@ -236,6 +399,36 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
+    public function actionStreaming()
+    {
+        $now = date("Y-m-d H:i:s");
+
+        $streaming = Streaming::find()
+                    ->where('start <= :now', [':now'=>$now])
+                    ->andWhere("end >= :now", [":now"=>$now])
+                    ->one();
+
+        $articles = $most_visited = Article::find()->where('category_id = 15')->orderBy('rand()')->limit(5)->all();
+        $categories = Category::find()->orderBy('category asc')->all();
+        $most_visited = Article::find()->orderBy('visit_counter desc')->limit(5)->all();
+
+        $next_streaming = Streaming::find()
+                    ->where('start > :now', [':now'=>$now])
+                    ->orderBy('start asc')
+                    ->one();
+
+        return $this->render(
+            'streaming',
+            [
+                'articles'          => $articles,
+                'categories'        => $categories,
+                'most_visited'      => $most_visited,
+                'next_streaming'    => $next_streaming,
+                'streaming'         => $streaming,
+            ]
+        );
+    }
+
     /**
      * Displays contact page.
      *
@@ -257,6 +450,66 @@ class SiteController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+    /**
+     * List all the article of one course
+     * @param String $slug slug for the course
+     * @return Array list of articles from the current course
+     */
+    public function actionCourse($slug)
+    {
+        $categories     = Category::find()->orderBy('category asc')->all();
+        $course         = Course::find()->where("slug = :slug", [":slug" => $slug])->one();
+
+        $query          = Article::find()->where("course_id = :course", [":course" => $course->id]);
+        $pagination     = new Pagination([
+            'defaultPageSize'   => 15,
+            'totalCount'        => $query->count(),
+        ]);
+
+        $articles       = Article::find()
+                            ->where("course_id = :course", [":course" => $course->id])
+                            ->offset($pagination->offset)
+                            ->limit($pagination->limit)
+                            ->all();
+        $most_visited   = Article::find()->orderBy('visit_counter desc')->limit(5)->all();
+
+        $courses    = Course::find()
+                        ->where("slug <> :slug", [":slug" => $course->slug])
+                        ->limit(4)->orderBy("rand()")->all();
+
+        return $this->render(
+            'course',
+            [
+                'articles'      => $articles,
+                'categories'    => $categories,
+                'course'        => $course,
+                'courses'       => $courses,
+                'most_visited'  => $most_visited,
+                'pagination'    => $pagination,
+            ]
+        );
+    }
+
+    /**
+     * find all courses
+     * @return objects array
+     */
+    public function actionAllCourses()
+    {
+        $categories     = Category::find()->orderBy('category asc')->all();
+        $most_visited   = Article::find()->orderBy('visit_counter desc')->limit(5)->all();
+        $courses        = Course::find()->all();
+
+        return $this->render(
+            'all-courses',
+            [
+                'categories'    => $categories,
+                'courses'       => $courses,
+                'most_visited'  => $most_visited,
+            ]
+        );
     }
 
     /**
@@ -287,11 +540,17 @@ class SiteController extends Controller
     /**
      * Displays about page.
      *
-     * @return mixed
+     * @return string
      */
     public function actionAbout()
     {
-        return $this->render('about');
+        $categories = Category::find()->orderBy('category asc')->all();
+
+        $most_visited = Article::find()->orderBy('visit_counter desc')->limit(5)->all();
+        return $this->render('about', [
+            'categories'    => $categories,
+            'most_visited'  => $most_visited,
+        ]);
     }
 
     /**

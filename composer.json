@@ -25,7 +25,10 @@
         "2amigos/yii2-date-picker-widget": "~1.0",
         "kartik-v/yii2-widget-alert": "*",
         "kartik-v/yii2-widget-growl": "*",
-        "dmstr/yii2-adminlte-asset": "*"
+        "dmstr/yii2-adminlte-asset": "*",
+        "branchonline/yii2-lightbox": "*",
+        "imanilchaudhari/yii2-rrssb": "dev-master",
+        "robregonm/yii2-pdf": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

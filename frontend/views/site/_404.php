@@ -9,7 +9,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="row">
     <div class="alert alert-danger text-center">
         <?= Html::img(
-            '@web/web/img/monker.png',
+            '@web/img/monker.png',
             [
                 'alt'   => 'Página No Encontrada'
             ]
