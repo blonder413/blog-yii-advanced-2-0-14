@@ -58,4 +58,48 @@ class ContactForm extends Model
             ->setHtmlBody($this->body)
             ->send();
     }
+
+    public function contact($email)
+    {
+
+//            return Yii::$app->mailer->compose()
+//                ->setTo($email)
+//                ->setFrom([$this->email => $this->name])
+//                ->setSubject($this->subject)
+//                ->setHtmlBody('<b>HTML content</b>')
+//                ->setTextBody($this->body)
+//                ->setHtmlBody($this->body)
+//                ->send();
+
+            //envío el correo
+
+            $from = $this->name . "<info@blonder413.com>";
+            $subject = "Contacto desde mi Web";
+            $body = "
+                    <html>
+                    <head>
+                    <body>
+                        <strong>Asunto</strong>:<br /> " . $this->subject ."
+                        <br /><br />
+                        <strong>Nombre</strong>:<br /> " . $this->name ."
+                        <br /><br />
+                        <strong>E-mail</strong>:<br /> " . $this->email . "
+                        <br /><br />
+                        <strong>Mensaje</strong>:<br /> " . $this->body . "
+                    </body>
+                    </head>
+                    <html>
+                    ";
+
+            //personalizar el mensaje
+            $sheader="From:".$from."\nReply-To:".$from."\n";
+            $sheader=$sheader."X-Mailer:PHP/".phpversion()."\n";
+            $sheader=$sheader."Mime-Version: 1.0\n";
+            $sheader=$sheader."Content-Type: text/html";
+
+            mail(Yii::$app->params['supportEmail'], $subject, $body, $sheader);
+
+            return true;
+
+    }
 }
