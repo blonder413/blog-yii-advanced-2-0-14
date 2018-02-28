@@ -44,6 +44,13 @@ class ArticleSearch extends Article
         $query = Article::find();
 
         // add conditions that should always apply here
+        $query->joinWith(['createdBy as user_created' => function ($q) {
+            $q->andFilterWhere(['=', 'user_created.username', $this->createdBy]);
+        }]);
+
+        if(!Yii::$app->user->can('admin')) {
+          $query->andWhere(['user_created.id' => Yii::$app->user->id]);
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
