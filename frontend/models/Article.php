@@ -129,6 +129,11 @@ class Article extends \yii\db\ActiveRecord
         ];
     }
 
+    public static function find()
+    {
+        return new ArticleQuery(get_called_class());
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
