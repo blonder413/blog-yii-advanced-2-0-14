@@ -18,6 +18,8 @@ use backend\models\Type;
 
     <?php $form = ActiveForm::begin(); ?>
 
+    <?= Html::activeHiddenInput($model, 'version') ?>
+    
     <?= $form->field($model, 'number')->textInput() ?>
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>

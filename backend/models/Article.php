@@ -58,7 +58,7 @@ class Article extends ActiveRecord
     {
         return [
             [['number', 'type_id', 'category_id', 'visit_counter', 'download_counter', 'course_id', 'created_by', 'updated_by'], 'integer'],
-            [['title', 'slug', 'detail', 'abstract', 'type_id', 'category_id', 'tags'], 'required'],
+            [['title', 'slug', 'detail', 'abstract', 'type_id', 'category_id', 'tags', 'version'], 'required'],
             [['detail'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['title', 'slug'], 'string', 'max' => 150],
@@ -67,6 +67,7 @@ class Article extends ActiveRecord
             [['video', 'tags'], 'string', 'max' => 255],
             [['status'], 'boolean'],
             [['title'], 'unique'],
+            [['version'], 'default', 'value' => 0],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['course_id'], 'exist', 'skipOnError' => true, 'targetClass' => Course::className(), 'targetAttribute' => ['course_id' => 'id']],
             [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => Type::className(), 'targetAttribute' => ['type_id' => 'id']],
@@ -149,6 +150,11 @@ class Article extends ActiveRecord
             return true;
         }
         return false;
+    }
+
+    public function optimisticLock()
+    {
+      return 'version';
     }
 
     /**

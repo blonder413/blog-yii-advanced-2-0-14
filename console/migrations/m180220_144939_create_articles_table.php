@@ -35,6 +35,7 @@ class m180220_144939_create_articles_table extends Migration
           'visit_counter'     => $this->integer()->defaultValue(0)->notNull(),
           'download_counter'  => $this->integer()->defaultValue(0)->notNull(),
           'course_id'         => $this->integer(),
+          'version'           => $this->bigInteger()->defaultValue(0)->notNull(),
           'created_by'        => $this->integer()->notNull(),
           'created_at'        => $this->dateTime()->notNull(),
           'updated_by'        => $this->integer()->notNull(),

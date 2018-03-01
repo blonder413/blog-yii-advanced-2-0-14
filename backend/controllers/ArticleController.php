@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use backend\models\Article;
 use backend\models\ArticleSearch;
+use yii\db\StaleObjectException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\ForbiddenHttpException;
@@ -109,8 +110,10 @@ class ArticleController extends Controller
         }
 
         $model = new Article();
+        $model->loadDefaultValues();
 
         if ($model->load(Yii::$app->request->post())) {
+
 
 //            $transaction = Article::getDb()->beginTransaction();
             $transaction = Yii::$app->db->beginTransaction();
@@ -147,6 +150,9 @@ class ArticleController extends Controller
             } catch (\Exception $e) {
                 $transaction->rollBack();
                 throw $e;
+            } catch(\Throwable $e) {            // PHP 7
+                $transaction->rollBack();
+                throw $e;
             }
 
         } else {
@@ -171,7 +177,31 @@ class ArticleController extends Controller
             throw new ForbiddenHttpException("Access denied");
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+
+          $transaction = Yii::$app->db->beginTransaction();
+
+          try {
+
+            if ($model->update()) {
+                Yii::$app->session->setFlash("success", Yii::t('app', "Article udpated successfully!"));
+            } else {
+                $errors = '';
+                foreach ($model->getErrors() as $key => $value) {
+                    foreach ($value as $row => $field) {
+                        //Yii::$app->session->setFlash("danger", $field);
+                        $errors .= $field . "<br>";
+                    }
+                }
+
+                Yii::$app->session->setFlash("danger", $errors);
+            }
+
+            $transaction->commit();
+          } catch (StaleObjectException $e) {
+              $transaction->rollBack();
+              Yii::$app->session->setFlash("danger", Yii::t('app', "Data was updated while you were editing!"));
+          }
             return $this->redirect(['index']);
         }
 
